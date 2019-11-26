@@ -1,4 +1,4 @@
-FROM brpauwels/php:7.4-nginx
+FROM brpauwels/php:7.4
 
 ENV XDEBUG_VERSION 2.8.0
 
