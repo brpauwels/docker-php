@@ -1,4 +1,4 @@
-FROM php:7.4.0RC6-fpm-alpine
+FROM php:7.4.0-fpm-alpine
 
 ENV REDIS_VERSION 5.1.1
 ENV MONGODB_VERSION 1.6.0
