@@ -4,7 +4,6 @@ ENV REDIS_VERSION 5.1.1
 ENV MONGODB_VERSION 1.6.0
 ENV AMQP_VERSION 1.9.4
 ENV MEMCACHED_VERSION 3.1.4
-ENV PROTOBUF_VERSION 3.11.0
 
 RUN apk add --no-cache \
         make \
@@ -50,13 +49,11 @@ RUN apk add --no-cache \
     && pecl install amqp-${AMQP_VERSION} \
     && pecl install mongodb-${MONGODB_VERSION} \
     && pecl install memcached-${MEMCACHED_VERSION} \
-    && pecl install protobuf-${PROTOBUF_VERSION} \
     && docker-php-ext-enable \
         redis \
         mongodb \
         amqp \
         memcached \
-        protobuf \
     && runDeps="$( \
        	scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
        	    | tr ',' '\n' \
