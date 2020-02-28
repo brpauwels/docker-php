@@ -4,6 +4,7 @@ ENV REDIS_VERSION 5.1.1
 ENV MONGODB_VERSION 1.7.3
 ENV AMQP_VERSION 1.9.4
 ENV MEMCACHED_VERSION 3.1.5
+ENV PROTOBUF_VERSION 3.11.4
 
 RUN apk add --no-cache \
         make \
@@ -28,10 +29,7 @@ RUN apk add --no-cache \
         gmp-dev \
         cyrus-sasl-dev \
         libmemcached-dev \
-    && docker-php-ext-configure gd \
-        --with-freetype-dir=/usr/include/ \
-        --with-png-dir=/usr/include/ \
-        --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
         bcmath \
         gd \
@@ -49,11 +47,13 @@ RUN apk add --no-cache \
     && pecl install amqp-${AMQP_VERSION} \
     && pecl install mongodb-${MONGODB_VERSION} \
     && pecl install memcached-${MEMCACHED_VERSION} \
+    && pecl install protobuf-${PROTOBUF_VERSION} \
     && docker-php-ext-enable \
         redis \
         mongodb \
         amqp \
         memcached \
+        protobuf \
     && runDeps="$( \
        	scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
        	    | tr ',' '\n' \
@@ -85,7 +85,6 @@ COPY conf/nginx/default.conf /usr/local/etc/nginx/conf.d/default.conf
 RUN chown -R www-data:www-data /run \
     && chown -R www-data:www-data /usr/local/etc/nginx \
     && chown -R www-data:www-data /var/lib/nginx \
-    && chown -R www-data:www-data /var/tmp/nginx \
     && chown -R www-data:www-data /var/log/nginx
 
 # Setup project root
