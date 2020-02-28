@@ -1,6 +1,6 @@
 FROM brpauwels/php:7.4
 
-ENV XDEBUG_VERSION 2.8.0
+ENV XDEBUG_VERSION 2.9.2
 
 USER root
 
