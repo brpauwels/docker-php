@@ -29,6 +29,7 @@ RUN apk add --no-cache \
         gmp-dev \
         cyrus-sasl-dev \
         libmemcached-dev \
+        postgresql-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
         bcmath \
@@ -38,7 +39,9 @@ RUN apk add --no-cache \
         intl \
         mysqli \
         opcache \
+        pdo \
         pdo_mysql \
+        pdo_pgsql \
         soap \
         sockets \
         zip \
