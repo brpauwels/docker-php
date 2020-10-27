@@ -1,10 +1,10 @@
 FROM php:7.4-fpm-alpine
 
-ENV REDIS_VERSION 5.2.2
-ENV MONGODB_VERSION 1.7.4
+ENV REDIS_VERSION 5.3.2
+ENV MONGODB_VERSION 1.8.1
 ENV AMQP_VERSION 1.10.2
 ENV MEMCACHED_VERSION 3.1.5
-ENV PROTOBUF_VERSION 3.12.2
+ENV PROTOBUF_VERSION 3.13.0.1
 
 RUN apk add --no-cache \
         make \
@@ -39,6 +39,7 @@ RUN apk add --no-cache \
         intl \
         mysqli \
         opcache \
+        pcntl \
         pdo \
         pdo_mysql \
         pdo_pgsql \
