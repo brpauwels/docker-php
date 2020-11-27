@@ -1,72 +1,67 @@
-FROM php:7.4-fpm-alpine
+FROM php:8.0-rc-fpm-alpine
 
-ENV REDIS_VERSION 5.3.2
-ENV MONGODB_VERSION 1.90
+# Pickle
+ENV PICKLE_VERSION 0.6.0
+RUN wget https://github.com/FriendsOfPHP/pickle/releases/download/v${PICKLE_VERSION}/pickle.phar \
+    && mv pickle.phar /usr/local/bin/pickle \
+    && chmod +x /usr/local/bin/pickle
+
+# PHP Extensions
 ENV AMQP_VERSION 1.10.2
 ENV MEMCACHED_VERSION 3.1.5
-ENV PROTOBUF_VERSION 3.14.0
+ENV MONGODB_VERSION 1.9.0
+ENV REDIS_VERSION 5.3.2
 
 RUN apk add --no-cache \
-        make \
-        openssh-client \
         git \
-        nginx \
-        supervisor \
-        gettext \
-        tzdata \
         grep \
-        libmemcached \
+        make \
+        nginx \
+        openssh-client \
+        supervisor \
     && apk add --no-cache --virtual .build-deps \
         $PHPIZE_DEPS \
-        icu-dev \
-        openssl-dev \
-        libxml2-dev \
-        freetype-dev \
-        libjpeg-turbo-dev \
-        libpng-dev \
-        libzip-dev \
+        # amqp
         rabbitmq-c-dev \
+        # gmp
         gmp-dev \
-        cyrus-sasl-dev \
+        # intl
+        icu-dev \
+        # memcached
         libmemcached-dev \
-        postgresql-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+        # soap
+        libxml2-dev \
+        # zip
+        libzip-dev \
     && docker-php-ext-install \
         bcmath \
-        gd \
-        gmp \
         exif \
+        gmp \
         intl \
-        mysqli \
         opcache \
         pcntl \
         pdo \
         pdo_mysql \
-        pdo_pgsql \
         soap \
         sockets \
         zip \
-    && pecl update-channels \
-    && pecl install redis-${REDIS_VERSION} \
-    && pecl install amqp-${AMQP_VERSION} \
-    && pecl install mongodb-${MONGODB_VERSION} \
-    && pecl install memcached-${MEMCACHED_VERSION} \
-    && pecl install protobuf-${PROTOBUF_VERSION} \
+    # && pickle install --no-interaction amqp-${AMQP_VERSION} \
+    && pickle install --no-interaction memcached-${MEMCACHED_VERSION} \
+    && pickle install --no-interaction mongodb-${MONGODB_VERSION} \
+    && pickle install --no-interaction redis-${REDIS_VERSION} \
     && docker-php-ext-enable \
-        redis \
-        mongodb \
-        amqp \
+        # amqp \
         memcached \
-        protobuf \
+        mongodb \
+        redis \
     && runDeps="$( \
-       	scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
-       	    | tr ',' '\n' \
-       	    | sort -u \
-       	    | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-       	)" \
-    && apk add --no-cache --virtual .php-rundeps $runDeps \
-    && apk del .build-deps \
-    && rm -rf /tmp/* ~/.pearrc
+    		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
+    			| tr ',' '\n' \
+    			| sort -u \
+    			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+    	)" \
+    && apk add --no-cache $runDeps \
+    && apk del --no-network .build-deps
 
 # Configure PHP
 RUN rm -rf /usr/local/etc/php-fpm.d/zz-docker.conf
