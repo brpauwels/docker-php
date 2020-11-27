@@ -1,10 +1,13 @@
+FROM composer as pickle
+
+RUN git clone https://github.com/FriendsOfPHP/pickle.git \
+    && cd pickle \
+    && composer install --no-dev --optimize-autoloader \
+    && php -d phar.readonly=0 box.phar build
+
 FROM php:8.0-rc-fpm-alpine
 
-# Pickle
-ENV PICKLE_VERSION 0.6.0
-RUN wget https://github.com/FriendsOfPHP/pickle/releases/download/v${PICKLE_VERSION}/pickle.phar \
-    && mv pickle.phar /usr/local/bin/pickle \
-    && chmod +x /usr/local/bin/pickle
+COPY --from=pickle /app/pickle/pickle.phar /usr/local/bin/pickle
 
 # PHP Extensions
 ENV AMQP_VERSION 1.10.2
