@@ -5,7 +5,7 @@ RUN git clone https://github.com/FriendsOfPHP/pickle.git \
     && composer install --no-dev --optimize-autoloader \
     && php -d phar.readonly=0 box.phar build
 
-FROM php:8.0-rc-fpm-alpine
+FROM php:8.0-fpm-alpine
 
 COPY --from=pickle /app/pickle/pickle.phar /usr/local/bin/pickle
 
