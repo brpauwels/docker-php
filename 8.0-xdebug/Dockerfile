@@ -3,7 +3,7 @@ FROM brpauwels/php:8.0
 USER root
 
 # PHP Extensions
-ENV XDEBUG_VERSION 3.0.0
+ENV XDEBUG_VERSION 3.0.1
 
 RUN apk add --no-cache --virtual .build-deps \
         $PHPIZE_DEPS \
