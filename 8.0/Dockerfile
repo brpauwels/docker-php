@@ -32,6 +32,8 @@ RUN apk add --no-cache \
         icu-dev \
         # memcached
         libmemcached-dev \
+        # pdo_pgsql
+        postgresql-dev \
         # soap
         libxml2-dev \
         # zip
@@ -45,6 +47,7 @@ RUN apk add --no-cache \
         pcntl \
         pdo \
         pdo_mysql \
+        pdo_pgsql \
         soap \
         sockets \
         zip \
