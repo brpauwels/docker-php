@@ -1,4 +1,4 @@
-FROM composer as pickle
+FROM composer as composer
 
 RUN git clone https://github.com/FriendsOfPHP/pickle.git \
     && cd pickle \
@@ -7,7 +7,8 @@ RUN git clone https://github.com/FriendsOfPHP/pickle.git \
 
 FROM php:8.0-fpm-alpine
 
-COPY --from=pickle /app/pickle/pickle.phar /usr/local/bin/pickle
+COPY --from=composer /app/pickle/pickle.phar /usr/local/bin/pickle
+COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 
 # PHP Extensions
 ENV AMQP_VERSION 1.10.2
@@ -73,9 +74,6 @@ RUN apk add --no-cache \
 RUN rm -rf /usr/local/etc/php-fpm.d/zz-docker.conf
 COPY conf/php/php.ini /usr/local/etc/php/conf.d/
 COPY conf/php/www.conf /usr/local/etc/php-fpm.d/www.conf
-
-# Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Configure Supervisor
 COPY conf/supervisor/supervisord.conf /etc/supervisord.conf
